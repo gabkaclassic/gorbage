@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+echo "Running staticcheck..."
+staticcheck ./...
+
+echo "Running go test..."
+go test ./...
+
+echo "Pre-push checks passed"
