@@ -101,6 +101,7 @@ func ParseServerConfig() (*ServerConfig, error) {
 	chunkSize := flag.Int64("chunk-size", cfg.ChunkSize, "Default upload chunk size")
 
 	address := flag.String("address", cfg.GRPC.Address, "GRPC server address")
+	serverName := flag.String("name", cfg.GRPC.ServerName, "Server name for cert")
 
 	keyPath := flag.String("key", cfg.GRPC.TLS.KeyPath, "TLS key file path")
 	certPath := flag.String("cert", cfg.GRPC.TLS.CertPath, "TLS certificate file path")
@@ -137,6 +138,8 @@ func ParseServerConfig() (*ServerConfig, error) {
 
 		case "address":
 			cfg.GRPC.Address = *address
+		case "name":
+			cfg.GRPC.ServerName = *serverName
 		case "cidrs":
 			cfg.GRPC.TrustedCIDRs = strings.Split(*trustedCIDRs, ",")
 
