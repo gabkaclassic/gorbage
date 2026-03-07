@@ -45,21 +45,6 @@ func prepareOutputFile(id, filepath string, isDir bool) (*os.File, string, strin
 	return output, outPath, tmpPath, nil
 }
 
-func verifyFileHash(filepath, expected string) error {
-	sum, _, err := hash.SHA256FromFile(filepath)
-	if err != nil {
-		slog.Error("get destination file hash error", slog.Any("error", err), slog.String("filepath", filepath))
-		return err
-	}
-
-	if sum != expected {
-		slog.Error("sha mismatch", slog.String("got", sum), slog.String("expected", expected))
-		return fmt.Errorf("sha mismatch: %s != %s", sum, expected)
-	}
-
-	return nil
-}
-
 func unpackArchive(dstDir, srcZip string) error {
 	if err := os.MkdirAll(dstDir, 0o755); err != nil {
 		return err
