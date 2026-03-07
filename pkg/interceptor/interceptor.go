@@ -186,6 +186,9 @@ func LoggingUnaryInterceptor() grpc.UnaryServerInterceptor {
 		if ok {
 			if vals := md.Get("x-request-id"); len(vals) > 0 {
 				requestID = strings.TrimSpace(vals[0])
+				if len(requestID) == 0 {
+					requestID = uuid.NewString()
+				}
 			} else {
 				requestID = uuid.NewString()
 			}
@@ -271,6 +274,9 @@ func LoggingStreamInterceptor() grpc.StreamServerInterceptor {
 		if ok {
 			if vals := md.Get("x-request-id"); len(vals) > 0 {
 				requestID = strings.TrimSpace(vals[0])
+				if len(requestID) == 0 {
+					requestID = uuid.NewString()
+				}
 			} else {
 				requestID = uuid.NewString()
 			}
@@ -300,6 +306,7 @@ func LoggingStreamInterceptor() grpc.StreamServerInterceptor {
 		return err
 	}
 }
+
 func AuthStreamInterceptor() grpc.StreamServerInterceptor {
 	return func(
 		srv any,
