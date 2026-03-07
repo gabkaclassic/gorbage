@@ -1,0 +1,10 @@
+config
+api
+githooks
+Dockerfile
+Makefile
+.gitignore
+.git
+.dockerignore
+staticcheck.conf
+*_test.go
