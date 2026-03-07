@@ -1,5 +1,6 @@
-.PHONY: docker-build build test help \
-	proto \
+.PHONY: build test proto help \
+	up down docker-build gorbage redis minio \
+	cipher-key \
 	certs server-certs client-certs clean-certs clean-server-certs clean-client-certs verify-certs show-certs-config \
 	
 
@@ -23,11 +24,17 @@ CLIENT_CRT = $(CLIENT_DIR)/client.crt
 CLIENT_EXT = client.ext
 CA_SERIAL = $(SERVER_DIR)/ca.srl
 
+CIPHER_KEY_LENGTH ?= 32
+CIPHER_KEY_PATH ?= config/client/cipher
+
 COMPOSE_FILE ?= config/docker/docker-compose.yml
 
 build:
 	go build -o build/server cmd/server/main.go
 	go build -o build/client cmd/client/main.go
+
+cipher-key:
+	@openssl rand -base64 48 | head -c $(CIPHER_KEY_LENGTH) > $(CIPHER_KEY_PATH)
 
 up: 
 	docker compose -f ${COMPOSE_FILE} up -d
