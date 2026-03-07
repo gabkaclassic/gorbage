@@ -29,9 +29,19 @@ CIPHER_KEY_PATH ?= config/client/cipher
 
 COMPOSE_FILE ?= config/docker/docker-compose.yml
 
+COVERAGE_FILE ?= coverage.out
+COVERAGE_FILTERED ?= coverage_filtered.out
+
 build:
 	go build -o build/server cmd/server/main.go
 	go build -o build/client cmd/client/main.go
+
+test:
+	@go clean -testcache
+	@go test ./... -coverprofile=$(COVERAGE_FILE)
+	@grep -v -E '(mocks\.gen\.go)|(main\.go)|(config\.go)' $(COVERAGE_FILE) > $(COVERAGE_FILTERED)
+	@go tool cover -func=$(COVERAGE_FILTERED)
+	@rm $(COVERAGE_FILTERED)
 
 cipher-key:
 	@openssl rand -base64 48 | head -c $(CIPHER_KEY_LENGTH) > $(CIPHER_KEY_PATH)
