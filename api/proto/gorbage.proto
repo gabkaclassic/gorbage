@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package gorbage;
+
+option go_package = "github.com/gabkaclassic/gorbage/internal/proto";
+
+
+message FileMetadata {
+  string original_path = 1;
+  uint64 size = 2;
+  bool is_directory = 3;
+  string sha256 = 4;
+}
+
+message InitiateUploadRequest {
+  FileMetadata meta = 1;
+  uint64 preferred_chunk_size = 2;
+  string prefix = 3;
+}
+
+message InitiateUploadResponse {
+  string upload_id = 1;            
+  uint64 chunk_size = 2;
+  uint64 total_chunks = 3;
+  int64 expires_at_unix = 4;
+}
+
+message UploadPartRequest {
+  string upload_id = 1;
+  uint64 seq = 2;
+  bytes data = 3;
+}
+
+message UploadPartResponse {
+  bool ok = 1;
+}
+
+message FileInfoRequest {
+  string prefix = 1;
+}
+
+message DownloadRangeRequest {
+  string prefix = 1;
+  uint64 offset = 2;
+  uint64 limit = 3;
+}
+
+message DownloadRangeResponse {
+  uint64 offset = 1;
+  bytes data = 2;
+  uint64 total_size = 3;
+}
+
+message FileInfo {
+  string prefix = 1;
+  string original_path = 2;
+  uint64 size = 3;
+  int64 created_at_unix = 4;
+  bool is_directory = 5;
+  string sha256 = 6;
+}
+
+message ListRequest {
+  string prefix = 1;
+}
+message ListResponse {
+  repeated FileInfo files = 1;
+}
+
+message DeleteRequest {
+  string prefix = 1;
+}
+message DeleteResponse {
+  bool success = 1;
+}
+
+service StorageService {
+  rpc InitiateUpload(InitiateUploadRequest) returns (InitiateUploadResponse);
+  rpc UploadPart(UploadPartRequest) returns (UploadPartResponse);
+
+  rpc DownloadRange(DownloadRangeRequest) returns (DownloadRangeResponse);
+  
+  rpc List(ListRequest) returns (ListResponse);
+  rpc GetFileInfo(FileInfoRequest) returns (FileInfo);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
