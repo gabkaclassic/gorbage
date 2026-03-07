@@ -36,6 +36,7 @@ type (
 	}
 	GRPC struct {
 		Address      string `env:"ADDRESS" envDefault:"localhost:8080"`
+		ServerName   string `env:"SERVER_NAME" envDefault:"localhost"`
 		TLS          TLS
 		TrustedCIDRs []string `env:"TRUSTED_CIDRS" envDefault:""`
 	}

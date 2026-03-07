@@ -56,7 +56,7 @@ func SetupGRPCServer(
 		ClientCAs:    caPool,
 		ClientAuth:   tls.RequireAndVerifyClientCert,
 		MinVersion:   tls.VersionTLS13,
-		ServerName:   "localhost",
+		ServerName:   cfg.ServerName,
 	}
 
 	creds := credentials.NewTLS(tlsConfig)
