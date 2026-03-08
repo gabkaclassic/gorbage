@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const testCtxKey string = "test-key"
+const testCtxKey ctxKey = "test-key"
 
 func TestPrepareTrustedCIDRs(t *testing.T) {
 	tests := []struct {
