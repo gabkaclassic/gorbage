@@ -1,0 +1,11 @@
+all: false
+dir: '{{.InterfaceDir}}'
+filename: mocks.gen.go
+include-auto-generated: false
+log-level: info
+structname: '{{.Mock}}{{.InterfaceName}}'
+recursive: false
+packages:
+  github.com/gabkaclassic/gorbage/internal/client:
+    config:
+      all: true

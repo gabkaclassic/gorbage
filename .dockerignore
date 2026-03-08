@@ -8,3 +8,4 @@ Makefile
 .dockerignore
 staticcheck.conf
 *_test.go
+*gen.go
