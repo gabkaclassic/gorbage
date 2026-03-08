@@ -36,7 +36,11 @@ func run() error {
 		return fmt.Errorf("failed to create connection with grpc server: %w", err)
 	}
 
-	storageClient := client.NewStorageClient(grpcConnection)
+	storageClient, err := client.NewStorageClient(grpcConnection)
+
+	if err != nil {
+		return fmt.Errorf("failed to create new storage client: %w", err)
+	}
 
 	err = client.ProcessCommand(ctx, storageClient, cfg.Command)
 

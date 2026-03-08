@@ -30,13 +30,17 @@ type (
 	}
 )
 
-func NewStorageClient(connection *grpc.ClientConn) StorageClient {
+func NewStorageClient(connection *grpc.ClientConn) (StorageClient, error) {
+
+	if connection == nil {
+		return nil, errors.New("GRPC connection can not be nil")
+	}
 
 	grpcClient := pb.NewStorageServiceClient(connection)
 
 	return &storageClient{
 		grpcClient: grpcClient,
-	}
+	}, nil
 }
 
 func (client *storageClient) LoadArtifactsList(ctx context.Context, prefix string) error {
