@@ -68,7 +68,11 @@ func run() error {
 		return fmt.Errorf("failed to create redis connection: %w", err)
 	}
 
-	artifactStorage := server.NewArtifactGRPCServer(minioConnection, redisConnection, cfg.UploadTTL, cfg.ChunkSize)
+	artifactStorage, err := server.NewArtifactGRPCServer(minioConnection, redisConnection, cfg.UploadTTL, cfg.ChunkSize)
+	if err != nil {
+		return fmt.Errorf("failed to setup artifact storage: %w", err)
+	}
+
 	grpcServer, err := server.SetupGRPCServer(cfg.GRPC, artifactStorage)
 	if err != nil {
 		return fmt.Errorf("failed to setup gRPC server: %w", err)

@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"strconv"
 	"time"
@@ -36,13 +37,29 @@ type StorageGRPCServer struct {
 	chunkSize       uint64
 }
 
-func NewArtifactGRPCServer(minioConnection *minio.Client, redisConnection *redis.Client, uploadTTL time.Duration, chunkSize int64) StorageGRPCServer {
+func NewArtifactGRPCServer(minioConnection *minio.Client, redisConnection *redis.Client, uploadTTL time.Duration, chunkSize int64) (StorageGRPCServer, error) {
+
+	if minioConnection == nil {
+		return StorageGRPCServer{}, errors.New("minio connection can not be nil")
+	}
+
+	if redisConnection == nil {
+		return StorageGRPCServer{}, errors.New("redis connection can not be nil")
+	}
+
+	if uploadTTL <= 0 {
+		return StorageGRPCServer{}, errors.New("upload TTL shoud be positive")
+	}
+	if chunkSize <= 0 {
+		return StorageGRPCServer{}, errors.New("chunk size shoud be positive")
+	}
+
 	return StorageGRPCServer{
 		minioConnection: minioConnection,
 		redisConnection: redisConnection,
 		uploadTTL:       uploadTTL,
 		chunkSize:       uint64(chunkSize),
-	}
+	}, nil
 }
 
 func getBitmapKey(uploadID string) string {
@@ -342,6 +359,7 @@ func (storage StorageGRPCServer) List(ctx context.Context, req *pb.ListRequest) 
 		Files: fileInfoList,
 	}, status.Error(codes.OK, "success get artifacts list")
 }
+
 func (storage StorageGRPCServer) GetFileInfo(ctx context.Context, req *pb.FileInfoRequest) (*pb.FileInfo, error) {
 
 	bucket := ctx.Value(interceptor.UserIDKey).(string)
@@ -377,6 +395,7 @@ func (storage StorageGRPCServer) GetFileInfo(ctx context.Context, req *pb.FileIn
 		Sha256:        info.UserMetadata[sha256Key],
 	}, nil
 }
+
 func (storage StorageGRPCServer) Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
 
 	bucket := ctx.Value(interceptor.UserIDKey).(string)
@@ -408,7 +427,7 @@ func (storage StorageGRPCServer) checkBucket(ctx context.Context) (string, error
 	exists, err := storage.minioConnection.BucketExists(ctx, bucket)
 
 	if err != nil {
-		slog.Error("check exists bucket error", slog.String("bucket", bucket), slog.Any("error", err))
+		slog.Error("check exists bucket error", slog.Bool("exists", exists), slog.String("bucket", bucket), slog.Any("error", err))
 		return "", err
 	}
 

@@ -39,7 +39,7 @@ build:
 test:
 	@go clean -testcache
 	@go test ./... -coverprofile=$(COVERAGE_FILE)
-	@grep -v -E '(mocks\.gen\.go)|(main\.go)|(config\.go)' $(COVERAGE_FILE) > $(COVERAGE_FILTERED)
+	@grep -v -E '(mocks\.gen\.go)|(main\.go)|(config\.go)|(grpc\.go)|(*\.pb\.go)' $(COVERAGE_FILE) > $(COVERAGE_FILTERED)
 	@go tool cover -func=$(COVERAGE_FILTERED)
 	@rm $(COVERAGE_FILTERED)
 
