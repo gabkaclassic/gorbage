@@ -19,6 +19,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const testCtxKey string = "test-key"
+
 func TestPrepareTrustedCIDRs(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -742,10 +744,10 @@ func TestTrustAddressUnaryInterceptor(t *testing.T) {
 					context.Background(),
 					metadata.New(map[string]string{"x-real-ip": "192.168.1.100"}),
 				)
-				ctx = context.WithValue(ctx, "test-key", "test-value")
+				ctx = context.WithValue(ctx, testCtxKey, "test-value")
 
 				handler := func(ctx context.Context, req any) (any, error) {
-					assert.Equal(t, "test-value", ctx.Value("test-key"))
+					assert.Equal(t, "test-value", ctx.Value(testCtxKey))
 					return "response", nil
 				}
 
