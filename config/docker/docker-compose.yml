@@ -3,7 +3,7 @@ version: '3.8'
 services:
   gorbage:
     build: ../..
-    container_name: gorbage
+    container_name: gorbage-server
     ports:
       - "8080:8080"
     env_file: gorbage.env
@@ -20,7 +20,7 @@ services:
 
   minio:
     image: minio/minio
-    container_name: minio
+    container_name: minio-gorbage
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -39,7 +39,7 @@ services:
 
   redis:
     image: redis
-    container_name: redis
+    container_name: redis-gorbage
     ports:
       - "6379:6379"
     env_file: redis.env
